@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+const mongoose = require('mongoose');
+const port = normalizePort(process.env.PORT || '3000');
+
+connect()
+  .on('error', console.log)
+  .on('disconnected', connect)
+  .once('open', function () {
+    require('../model/autoReply');
+
+    require('../bot');
+    const app = require('../app');
+    app.listen(port);
+  });
+
+
+function connect () {
+  const options = { server: { socketOptions: { keepAlive: 1 } } };
+  return mongoose.connect('mongodb://127.0.0.1/wechaty', options).connection;
+}
+
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
